@@ -1,12 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Close other dropdowns
-  function closeOtherDropdowns() {
-    const dropdowns = [themeDropdown, notificationDropdown, userDropdown];
-    dropdowns.forEach(dropdown => {
-      if (dropdown) dropdown.classList.remove('open');
-    });
-  }
-
   // Theme Functionality
   const themeToggle = document.querySelector('.theme-toggle');
   const themeDropdown = document.querySelector('.theme-dropdown');
@@ -101,9 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isNowPinned) {
         sidebar.classList.add('open');
         mainContent.classList.add('open');
-      } else {
-        sidebar.classList.remove('open');
-        mainContent.classList.remove('open');
       }
     });
   }
@@ -131,9 +120,4 @@ document.addEventListener('DOMContentLoaded', () => {
       closeOtherDropdowns();
     });
   }
-
-  // Close dropdowns when clicking outside
-  document.addEventListener('click', () => {
-    closeOtherDropdowns();
-  });
 });
