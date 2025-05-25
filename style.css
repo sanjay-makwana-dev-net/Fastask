@@ -20,13 +20,13 @@
 body {
   font-family: 'Inter', sans-serif;
   background: #F9FAFB;
-  color: #1F2937;
+  color: #1F2937; /* Default text color for light mode */
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .dark body {
   background: #111827;
-  color: #FFFFFF;
+  color: #FFFFFF; /* White text color for dark mode */
 }
 
 .card {
@@ -84,7 +84,8 @@ body {
 header {
   animation: slideIn 0.5s ease-in-out;
   z-index: 30;
-  position: relative; /* Ensure header itself is relative if dropdowns are children of header directly */
+  position: sticky; /* Changed to sticky */
+  top: 0;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -93,7 +94,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* Prevent wrapping on smaller screens for key elements */
   gap: 1rem;
 }
 
@@ -142,7 +143,7 @@ header {
 }
 
 /* Sidebar toggle icon on mobile */
-@media (max-width: 640px) {
+@media (max-width: 767px) { /* Adjusted breakpoint for md:ml-64 */
   #sidebar {
     position: fixed;
     top: 0;
@@ -179,8 +180,19 @@ header {
   #sidebar-icon.open .close-path {
     opacity: 1; /* Show close path when open */
   }
-
 }
+
+@media (min-width: 768px) { /* md breakpoint and above */
+  #sidebar {
+    position: relative; /* Sidebar is part of the flow on desktop */
+    transform: translateX(0); /* Always visible */
+    width: 16rem; /* Fixed width */
+  }
+  #sidebar-toggle {
+    display: none; /* Hide toggle button on desktop */
+  }
+}
+
 
 .dark #sidebar {
   background: rgba(31, 41, 55, 0.8);
@@ -267,55 +279,53 @@ footer a:hover {
 main {
   position: relative;
   z-index: 20;
-  margin-left: 0;
+  margin-left: 0; /* Default for mobile */
   transition: margin-left 0.3s ease-in-out;
 }
 
-#main-content.open {
+/* No longer needed as md:ml-64 is directly on main-content */
+/* #main-content.open {
   margin-left: 16rem;
-}
+} */
 
 /* Base dropdown styles for all dropdowns */
 .notification-dropdown,
 .user-dropdown,
 .theme-dropdown {
-  background: #ffffff; /* Changed: Solid white background */
-  backdrop-filter: none; /* Changed: Removed blur */
-  -webkit-backdrop-filter: none; /* Changed: Removed blur */
-  border: 1px solid rgba(255, 255, 255, 0.18) !important;
-  border-radius: 12px !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  background: #ffffff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   transition: all 0.2s ease;
   opacity: 0;
   pointer-events: none;
-  transform: translateY(0); /* Changed: Removed initial translateY(10px) - now starts at final position */
-  /* Ensure these are absolute so they respect their relative parent */
-  position: absolute;
-  z-index: 40; /* Higher than header's z-index */
+  transform: translateY(0);
+  position: absolute; /* Default to absolute for header dropdowns */
+  z-index: 40;
   overflow: hidden;
 }
 
 .dark .notification-dropdown,
 .dark .user-dropdown,
 .dark .theme-dropdown {
-  background: #1F2937; /* Changed: Solid dark background */
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  backdrop-filter: none; /* Changed: Removed blur */
-  -webkit-backdrop-filter: none; /* Changed: Removed blur */
+  background: #1F2937;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 /* Open state for all dropdowns */
 .notification-dropdown.open,
 .user-dropdown.open,
 .theme-dropdown.open {
-  opacity: 1 !important;
-  pointer-events: auto !important;
-  transform: translateY(0) !important; /* Retained: Ensures it stays at the final position */
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
-
 /* Specific positioning for header dropdowns (desktop default) */
-/* Apply these to the dropdowns directly, not nested under header anymore */
 .notification-dropdown,
 .user-dropdown {
     top: 100%; /* Position relative to the parent with position:relative */
@@ -325,7 +335,7 @@ main {
 
 /* Specific positioning for the floating theme dropdown */
 .floating-theme-toggle-wrapper .theme-dropdown {
-    position: absolute;
+    position: absolute; /* Position relative to its wrapper */
     bottom: 100%; /* Position above the floating button */
     right: 0;
     margin-bottom: 1rem; /* Space between button and dropdown */
@@ -430,7 +440,8 @@ body:has(.theme-dropdown.open) main {
   display: none;
 }
 
-@media (max-width: 640px) {
+/* Mobile styles (up to 767px) */
+@media (max-width: 767px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
@@ -440,66 +451,61 @@ body:has(.theme-dropdown.open) main {
     font-size: 1rem;
   }
   header {
-    flex-direction: row; /* Keep as row */
-    justify-content: space-between; /* Space out items */
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
-    flex-wrap: nowrap; /* Prevent wrapping for top bar elements */
-    padding-right: 0.5rem; /* Adjust padding if needed */
+    flex-wrap: nowrap; /* Keep header elements in one row */
+    padding-right: 0.5rem;
   }
-  header .flex.items-center.space-x-4:first-child { /* Group sidebar toggle and search */
-    flex-grow: 1; /* Allow this group to take available space */
+  header .flex.items-center.space-x-4:first-child {
+    flex-grow: 1;
     display: flex;
     align-items: center;
-    gap: 0.5rem; /* Space between sidebar toggle and search */
+    gap: 0.5rem;
   }
-  header .flex.items-center.space-x-4:last-child { /* Group notification and user profile */
-    flex-shrink: 0; /* Prevent this group from shrinking */
+  header .flex.items-center.space-x-4:last-child {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
-    gap: 0.5rem; /* Space between icons */
+    gap: 0.5rem;
   }
   .search-input {
-    width: auto; /* Allow the search input to shrink */
-    flex-grow: 1; /* Make it flexible */
-    max-width: calc(100vw - 120px); /* Limit search input width to prevent overflow, approx 120px for icons + padding */
+    width: auto;
+    flex-grow: 1;
+    max-width: calc(100vw - 120px); /* Adjust based on sidebar toggle + icons + padding */
   }
-  #main-content.open {
-    margin-left: 0;
+  /* Ensure main content does not have left margin on mobile */
+  #main-content {
+    margin-left: 0 !important; /* Override any desktop margin */
   }
 
-  /* --- IMPORTANT: Mobile specific styles for dropdowns --- */
-  /* Remove default positioning to allow new mobile-specific rules to apply */
+  /* Mobile specific styles for dropdowns (fixed position) */
   .notification-dropdown,
   .user-dropdown {
-    right: auto; /* Remove right alignment */
-    left: 50%;   /* Attempt to center */
-    transform: translateX(-50%) translateY(0); /* Changed: Starts at final position, no vertical slide */
+    position: fixed; /* Fixed position for full screen coverage */
+    top: 4rem; /* Adjust based on header height */
+    left: 50%;
+    transform: translateX(-50%);
     width: calc(100vw - 2rem); /* Full width minus side padding */
     max-width: 350px; /* Max width for larger mobiles/tablets */
-    position: fixed; /* Make them relative to the viewport for full screen control */
-    top: 3.5rem; /* Adjust based on your header's height, roughly below the header */
     margin-top: 0; /* Remove any previous margin-top */
-  }
-
-  /* Adjust open state for mobile dropdowns to ensure correct centering */
-  .notification-dropdown.open,
-  .user-dropdown.open {
-    transform: translateX(-50%) translateY(0) !important; /* Final open state (unchanged) */
   }
 }
 
-@media (min-width: 641px) and (max-width: 1024px) {
+/* Tablet styles (768px to 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
   .dashboard-grid {
     grid-template-columns: repeat(2, 1fr);
   }
   header {
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* Keep header elements in one row */
   }
   .search-input {
     max-width: 300px;
   }
 }
 
+/* Desktop styles (1025px and above) */
 @media (min-width: 1025px) {
   .dashboard-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -541,20 +547,20 @@ html {
 
 /* Notification dropdown styles */
 .notification-dropdown {
-    background: #ffffff; /* Changed: Solid white background */
-    backdrop-filter: none; /* Changed: Removed blur */
-    -webkit-backdrop-filter: none; /* Changed: Removed blur */
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    background: #ffffff;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     overflow: hidden;
 }
 
 .dark .notification-dropdown {
-    background: #1F2937; /* Changed: Solid dark background */
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: none; /* Changed: Removed blur */
-    -webkit-backdrop-filter: none; /* Changed: Removed blur */
+    background: #1F2937;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 }
 
 .notification-dropdown a {
@@ -571,20 +577,20 @@ html {
 
 /* User dropdown styles */
 .user-dropdown {
-    background: #ffffff; /* Changed: Solid white background */
-    backdrop-filter: none; /* Changed: Removed blur */
-    -webkit-backdrop-filter: none; /* Changed: Removed blur */
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    background: #ffffff;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     overflow: hidden;
 }
 
 .dark .user-dropdown {
-    background: #1F2937; /* Changed: Solid dark background */
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: none; /* Changed: Removed blur */
-    -webkit-backdrop-filter: none; /* Changed: Removed blur */
+    background: #1F2937;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 }
 
 .user-dropdown a {
@@ -598,15 +604,6 @@ html {
 .user-dropdown a:hover svg {
     transform: scale(1.1);
 }
-
-/* Common dropdown styles (remove !important from transform properties here) */
-.notification-dropdown.open,
-.user-dropdown.open {
-    opacity: 1;
-    pointer-events: auto;
-    /* transform will be overridden by mobile or desktop specific rules */
-}
-
 
 /* Notification badge */
 .notification-icon span {
@@ -683,29 +680,31 @@ html {
     position: fixed;
     bottom: 1.5rem;
     right: 1.5rem;
-    z-index: 50; /* Ensure it's above most content */
+    z-index: 50;
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    justify-content: center;
+    align-items: center;
 }
 
 #floating-theme-toggle {
-    width: 56px; /* Larger touch target */
+    width: 56px;
     height: 56px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem; /* Larger icon */
-    background-color: var(--primary);
-    color: white;
+    font-size: 1.5rem;
+    background-color: transparent;
+    color: var(--primary);
     border-radius: 50%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: none;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 51;
 }
 
 #floating-theme-toggle:hover {
-    background-color: var(--primary-dark);
-    transform: scale(1.05);
+    background-color: transparent;
+    transform: scale(1.1);
 }
 
 /* Animation for the sun icon */
@@ -719,10 +718,109 @@ html {
 }
 
 .animate-spin-slow {
-  animation: spin-slow 10s linear infinite; /* Adjust duration for desired speed */
+  animation: spin-slow 10s linear infinite;
 }
 
-/* Hover effect to stop spin and reveal dropdown */
+/* Hover effect to stop spin */
 .floating-theme-toggle-wrapper:hover #floating-theme-toggle {
-    animation-play-state: paused; /* Pause spin on hover */
+    animation-play-state: paused;
+}
+
+/* Modified theme dropdown for circular reveal */
+.theme-dropdown {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 56px;
+    height: 56px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transform-origin: 50% 50%;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 49;
+}
+
+.floating-theme-toggle-wrapper:hover .theme-dropdown.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.theme-option {
+    position: absolute;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease-out;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--card-shadow);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--primary);
+}
+
+.theme-option:hover {
+    transform: scale(1.1);
+    background: var(--primary);
+    color: white;
+}
+
+.theme-option .check-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--accent);
+}
+
+.theme-option.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 0 0 2px var(--accent);
+}
+
+.dark .theme-option {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--card-shadow);
+}
+
+.dark .theme-option:hover {
+    background: var(--primary-dark);
+}
+
+.dark .theme-option.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* Positioning for individual theme options around the center */
+.floating-theme-toggle-wrapper:hover .theme-dropdown .theme-option:nth-child(1) { /* Light Mode */
+    opacity: 1;
+    transform: translate(-70px, -20px) scale(1);
+    transition-delay: 0.1s;
+}
+
+.floating-theme-toggle-wrapper:hover .theme-dropdown .theme-option:nth-child(2) { /* Dark Mode */
+    opacity: 1;
+    transform: translate(-50px, -60px) scale(1);
+    transition-delay: 0.2s;
+}
+
+.floating-theme-toggle-wrapper:hover .theme-dropdown .theme-option:nth-child(3) { /* System Mode */
+    opacity: 1;
+    transform: translate(-0px, -70px) scale(1);
+    transition-delay: 0.3s;
 }
