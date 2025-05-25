@@ -1,4 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Hide loader when DOM is fully loaded
+  const loader = document.getElementById('loader');
+  if (loader) {
+    setTimeout(() => { //
+      loader.classList.add('loader-hidden'); //
+      // Optional: Remove loader from DOM after animation for performance
+      loader.addEventListener('transitionend', () => { //
+        loader.remove(); //
+      });
+    }, 1000); // 5000 milliseconds = 5 seconds
+  }
+
   // Theme Functionality
   const themeToggle = document.querySelector('.theme-toggle');
   const themeDropdown = document.querySelector('.theme-dropdown');
@@ -66,22 +78,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const sidebarIcon = document.querySelector('#sidebar-icon');
   const mainContent = document.querySelector('#main-content');
   const pinSidebar = document.querySelector('#pin-sidebar');
+  const menuPath = document.querySelector('.menu-path');
+  const closePath = document.querySelector('.close-path');
 
   // Check for pinned state
   const isPinned = localStorage.getItem('sidebarPinned') === 'true';
-
   if (isPinned) {
     sidebar.classList.add('open');
     mainContent.classList.add('open');
     pinSidebar.classList.add('pinned');
+    // Ensure correct icon is shown if pinned on load
+    if (menuPath && closePath) {
+        menuPath.classList.add('hidden');
+        closePath.classList.remove('hidden');
+    }
   }
 
   // Toggle sidebar
-  if (sidebarToggle && sidebarIcon && mainContent) {
+  if (sidebarToggle && sidebarIcon && mainContent && menuPath && closePath) {
     sidebarToggle.addEventListener('click', () => {
       sidebar.classList.toggle('open');
       sidebarIcon.classList.toggle('open');
       mainContent.classList.toggle('open');
+      menuPath.classList.toggle('hidden'); // Hide menu icon
+      closePath.classList.toggle('hidden'); // Show close icon
 
       // Unpin when manually toggling
       if (!sidebar.classList.contains('open')) {
@@ -123,18 +143,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Close dropdowns when clicking outside
+  // Close dropdowns and sidebar when clicking outside
   document.addEventListener('click', (e) => {
-    if (!notificationDropdown.contains(e.target) && !notificationIcon.contains(e.target)) {
+    // Close notification dropdown
+    if (notificationDropdown && notificationIcon && !notificationDropdown.contains(e.target) && !notificationIcon.contains(e.target)) {
       notificationDropdown.classList.remove('open');
     }
 
-    if (!userDropdown.contains(e.target) && !userProfile.contains(e.target)) {
+    // Close user dropdown
+    if (userDropdown && userProfile && !userDropdown.contains(e.target) && !userProfile.contains(e.target)) {
       userDropdown.classList.remove('open');
     }
 
-    if (!themeDropdown.contains(e.target) && !themeToggle.contains(e.target)) {
+    // Close theme dropdown
+    if (themeDropdown && themeToggle && !themeDropdown.contains(e.target) && !themeToggle.contains(e.target)) {
       themeDropdown.classList.remove('open');
+    }
+
+    // Close sidebar when clicking outside on mobile
+    // Check if the click was outside the sidebar and not on the toggle button
+    if (sidebar && sidebarToggle && !sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && sidebar.classList.contains('open')) {
+        // Check for mobile screen size, e.g., max-width 640px
+        if (window.innerWidth <= 640) {
+            sidebar.classList.remove('open');
+            mainContent.classList.remove('open');
+            sidebarIcon.classList.remove('open'); // Toggle icon back
+            if (menuPath && closePath) {
+                menuPath.classList.remove('hidden'); // Show menu icon
+                closePath.classList.add('hidden'); // Hide close icon
+            }
+        }
     }
   });
 
@@ -154,4 +192,23 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Important: Add a resize listener to handle cases where screen size changes (e.g., rotating device)
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 640 && sidebar && sidebar.classList.contains('open')) {
+        // If sidebar is open and screen resized to desktop, close it gracefully
+        sidebar.classList.remove('open');
+        if (mainContent) mainContent.classList.remove('open'); // Ensure mainContent exists
+        if (sidebarIcon) sidebarIcon.classList.remove('open'); // Ensure sidebarIcon exists
+        if (menuPath && closePath) { // Ensure paths exist
+            menuPath.classList.remove('hidden'); // Show menu icon
+            closePath.classList.add('hidden'); // Hide close icon
+        }
+        // Also unpin if it was pinned and now on desktop
+        if (pinSidebar && pinSidebar.classList.contains('pinned')) {
+            pinSidebar.classList.remove('pinned');
+            localStorage.setItem('sidebarPinned', 'false');
+        }
+    }
+  });
 });
