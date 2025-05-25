@@ -29,6 +29,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function closeOtherDropdowns(excludeDropdown) {
+    const dropdowns = [themeDropdown, notificationDropdown, userDropdown];
+    dropdowns.forEach(dropdown => {
+      if (dropdown !== excludeDropdown && dropdown) {
+        dropdown.classList.remove('open');
+      }
+    });
+  }
+
   // Apply saved theme on page load
   const savedTheme = localStorage.getItem('theme') || 'system';
   applyTheme(savedTheme);
@@ -38,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     themeToggle.addEventListener('click', (e) => {
       e.stopPropagation();
       themeDropdown.classList.toggle('open');
-      closeOtherDropdowns();
+      closeOtherDropdowns(themeDropdown);
     });
   }
 
@@ -73,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
       sidebar.classList.toggle('open');
       sidebarIcon.classList.toggle('open');
       mainContent.classList.toggle('open');
-      
+
       // Unpin when manually toggling
       if (!sidebar.classList.contains('open')) {
         pinSidebar.classList.remove('pinned');
@@ -89,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
       pinSidebar.classList.toggle('pinned');
       const isNowPinned = pinSidebar.classList.contains('pinned');
       localStorage.setItem('sidebarPinned', isNowPinned.toString());
-      
+
       if (isNowPinned) {
         sidebar.classList.add('open');
         mainContent.classList.add('open');
@@ -101,13 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const notificationIcon = document.querySelector('.notification-icon');
   const notificationDropdown = document.querySelector('.notification-dropdown');
 
-  if (notificationIcon) {
-    notificationIcon.addEventListener('click', (e) => {
-      e.stopPropagation();
-      notificationDropdown.classList.toggle('open');
-      closeOtherDropdowns();
-    });
-  }
 
   // User dropdown
   const userProfile = document.querySelector('.user-profile');
@@ -117,7 +119,39 @@ document.addEventListener('DOMContentLoaded', () => {
     userProfile.addEventListener('click', (e) => {
       e.stopPropagation();
       userDropdown.classList.toggle('open');
-      closeOtherDropdowns();
+      closeOtherDropdowns(userDropdown);
+    });
+  }
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!notificationDropdown.contains(e.target) && !notificationIcon.contains(e.target)) {
+      notificationDropdown.classList.remove('open');
+    }
+
+    if (!userDropdown.contains(e.target) && !userProfile.contains(e.target)) {
+      userDropdown.classList.remove('open');
+    }
+
+    if (!themeDropdown.contains(e.target) && !themeToggle.contains(e.target)) {
+      themeDropdown.classList.remove('open');
+    }
+  });
+
+  // Add animation to notification icon when dropdown is open
+  if (notificationIcon) {
+    notificationIcon.addEventListener('click', (e) => {
+      e.stopPropagation();
+      notificationDropdown.classList.toggle('open');
+      closeOtherDropdowns(notificationDropdown);
+
+      // Add animation class
+      if (notificationDropdown.classList.contains('open')) {
+        notificationIcon.classList.add('animate-bounce');
+        setTimeout(() => {
+          notificationIcon.classList.remove('animate-bounce');
+        }, 1000);
+      }
     });
   }
 });
