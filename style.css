@@ -1,0 +1,218 @@
+/* Custom styles for Fastask Dashboard */
+:root {
+  --primary: #5B21B6;
+  --primary-dark: #4C1D95;
+  --accent: #10B981;
+  --card-bg: rgba(255, 255, 255, 0.1);
+  --card-border: rgba(255, 255, 255, 0.2);
+  --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.18);
+}
+
+.dark {
+  --primary: #7C3AED;
+  --primary-dark: #6D28D9;
+  --accent: #34D399;
+  --card-bg: rgba(31, 41, 55, 0.2);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #F3F4F6;
+  color: #1F2937;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+  background: #0F172A;
+  color: #F9FAFB;
+}
+
+/* Card Styles */
+.card {
+  background: var(--card-bg) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border) !important;
+  box-shadow: var(--card-shadow) !important;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2) !important;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--primary);
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+/* Sidebar Styles */
+#sidebar {
+  transition: transform 0.3s ease-in-out;
+}
+
+#sidebar.open {
+  transform: translateX(0);
+}
+
+#pin-sidebar.pinned .pinned-icon {
+  display: none;
+}
+
+#pin-sidebar.pinned .unpinned-icon {
+  display: block;
+  color: var(--accent);
+}
+
+#pin-sidebar .unpinned-icon {
+  display: none;
+}
+
+#pin-sidebar.pinned {
+  color: var(--accent);
+}
+
+/* Main Content */
+#main-content.open {
+  margin-left: 256px;
+}
+
+/* Header Styles */
+header {
+  animation: slideIn 0.5s ease-in-out;
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utility Classes */
+.animation-delay-200 { animation-delay: 0.2s; }
+.animation-delay-400 { animation-delay: 0.4s; }
+.animation-delay-600 { animation-delay: 0.6s; }
+.animation-delay-800 { animation-delay: 0.8s; }
+
+/* Dropdown Styles */
+.notification-dropdown,
+.user-dropdown,
+.theme-dropdown {
+  transition: all 0.3s ease;
+}
+
+.notification-dropdown.open,
+.user-dropdown.open,
+.theme-dropdown.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* Responsive Grid */
+@media (max-width: 640px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  #main-content.open {
+    margin-left: 0;
+  }
+  #sidebar.open {
+    transform: translateX(0);
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1025px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Theme Options */
+.theme-option.active {
+  background: rgba(91, 33, 182, 0.15);
+}
+
+.dark .theme-option.active {
+  background: rgba(124, 58, 237, 0.2);
+}
+
+.theme-option .check-icon {
+  color: var(--accent);
+}
+
+/* Notification Badge */
+.notification-icon span {
+  background: #EF4444;
+  color: white;
+}
+
+/* Footer Styles */
+footer {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Search Input */
+.search-input {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.dark .search-input {
+  background: rgba(31, 41, 55, 0.2) !important;
+}
+
+.dark .search-input:focus {
+  background: rgba(31, 41, 55, 0.3) !important;
+}
